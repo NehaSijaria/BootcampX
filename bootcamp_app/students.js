@@ -6,17 +6,34 @@ const pool = new Pool({
   host: 'localhost',
   database: 'bootcampx'
 });
+// sql Injections
+pool.query(queryString, values);(`
+  SELECT students.id as student_id, students.name as name, cohorts.name as cohort
+  FROM students
+  JOIN cohorts ON cohorts.id = cohort_id
+  WHERE cohorts.name LIKE '%${process.argv[2]}%'
+  LIMIT 5;
+  `)
+  .then(res => {
+    res.rows.forEach(row => {
+      console.log(`${row.name} has an id of ${row.student_id} and was in the ${row.cohort} cohort`);
+    })
+  }).catch(err => console.error('query error', err.stack));
 
-pool.query(`
-SELECT students.id, students.name, cohort_id
-FROM students
-LIMIT 5;
-`)
-.then(res => {
-  // console.log(res); // shows full result
-  console.log(res.rows);
-})
-.catch(err => console.error('query error', err.stack));
+
+
+
+// 
+// pool.query(`
+// SELECT students.id, students.name, cohort_id
+// FROM students
+// LIMIT 5;
+// `)
+// .then(res => {
+//   // console.log(res); // shows full result
+//   console.log(res.rows);
+// })
+// .catch(err => console.error('query error', err.stack));
 
 // pool.query(`
 // SELECT students.id as student_id, students.name as name, cohorts.name as cohort
